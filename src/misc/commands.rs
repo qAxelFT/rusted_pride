@@ -19,23 +19,29 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 #[poise::command(slash_command, prefix_command)]
-pub async fn sum(
-    ctx: Context<'_>,
-    #[description = "first number"] num1: i32,
-    #[description = "Second number"] num2: i32,
-) -> Result<(), Error> {
-    let res = num1 + num2;
-
-    let response = format!("{} + {} = {}", num1, num2, res);
-    ctx.say(response).await?;
-    Ok(())
-}
-
-#[poise::command(slash_command, prefix_command)]
 pub async fn echo(
     ctx: Context<'_>,
     #[description = "message to echo"] msg: String,
 ) -> Result<(), Error> {
     ctx.say(msg).await?;
+    Ok(())
+}
+
+#[poise::command(prefix_command, track_edits, slash_command)]
+pub async fn help(
+    ctx: Context<'_>,
+    #[description = "Specific command to show help about"]
+    #[autocomplete = "poise::builtins::autocomplete_command"]
+    command: Option<String>,
+) -> Result<(), Error> {
+    poise::builtins::help(
+        ctx,
+        command.as_deref(),
+        poise::builtins::HelpConfiguration {
+            extra_text_at_bottom: "Test?",
+            ..Default::default()
+        },
+    )
+    .await?;
     Ok(())
 }
